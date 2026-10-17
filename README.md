@@ -138,6 +138,15 @@ Pay per product, platform usage included, no start fee:
 
 Coles full product details (barcode, ingredients, nutrition) are optional: +$0.50 per 1,000 products. See the actor pages for details.
 
+## More tools from Quelli di Carne Genuina
+
+- **Ad intelligence:** [Google Ads Transparency](https://github.com/assa83/google-ads-transparency-api) · [Meta Ad Library](https://github.com/assa83/facebook-ad-library-api) · [TikTok Top Ads](https://github.com/assa83/tiktok-top-ads-api) · [LinkedIn Ad Library](https://github.com/assa83/linkedin-ad-library-api)
+- **Competitor & SEO research:** [Similarweb traffic](https://github.com/assa83/similarweb-traffic-api) · [Google Trends](https://github.com/assa83/google-trends-api-python) · [Google Play](https://github.com/assa83/google-play-scraper-api)
+- **Travel prices:** [Google Hotels](https://github.com/assa83/google-hotels-prices-api) · [Google Flights](https://github.com/assa83/google-flights-api)
+- **Content & social data:** [YouTube Transcript](https://github.com/assa83/youtube-transcript-scraper-api) · [Medium](https://github.com/assa83/medium-scraper-api) · [Likee](https://github.com/assa83/likee-scraper-api)
+
+All actors: [apify.com/lagenuina_agency](https://apify.com/lagenuina_agency) · Tutorials: [assa83.github.io](https://assa83.github.io)
+
 ## Disclaimer
 
 Independent, not affiliated with or endorsed by Woolworths Group or Coles Group. The actors read only publicly available product data, without login. Use them in line with the applicable terms and laws.
