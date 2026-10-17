@@ -1,0 +1,10 @@
+{
+  "name": "australian-supermarket-prices-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Woolworths and Coles grocery prices API examples: product search, specials, unit prices, barcodes. Python, JavaScript, n8n and MCP for AI agents.",
+  "license": "MIT",
+  "scripts": { "start": "node example.mjs" },
+  "dependencies": { "apify-client": "^2.25.0" }
+}

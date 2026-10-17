@@ -1,0 +1,200 @@
+{
+  "name": "Woolworths vs Coles daily prices (Apify)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "id": "61c1ed3b-8ed7-4afa-8d05-fe0bd190e522",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/lagenuina_agency~woolworths-scraper/run-sync-get-dataset-items",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"operation\": \"search\",\n  \"query\": \"milk\",\n  \"searchTerms\": [\n    \"bread\",\n    \"eggs\"\n  ],\n  \"limit\": 20\n}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "4d2c5348-70f7-46b5-9f01-4425c7605ddc",
+      "name": "Woolworths prices",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Apify API token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/lagenuina_agency~coles-scraper/run-sync-get-dataset-items",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"operation\": \"search\",\n  \"query\": \"milk\",\n  \"searchTerms\": [\n    \"bread\",\n    \"eggs\"\n  ],\n  \"limit\": 20\n}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "3eb77118-1abd-44f0-ace7-55b7ea8752b1",
+      "name": "Coles prices",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        200
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Apify API token"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "9b349c87-b301-4e97-8f67-192ac692deeb",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        480,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(({ json: it }) => ({ json: {\n  date: (it.scraped_at || '').slice(0, 10),\n  store: (it.source_url || '').includes('coles') ? 'Coles' : 'Woolworths',\n  search: it.search_query, product: it.full_name || it.name, brand: it.brand, size: it.size,\n  price: it.price, special_price: it.discount_price, discount_pct: it.discount_percent,\n  unit_price: it.cup_price ?? it.unit_price, available: it.is_available, url: it.source_url,\n} }));"
+      },
+      "id": "4a5a1f0f-fd93-4cad-9bf8-bb163f8a62e5",
+      "name": "Flatten rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {}
+        },
+        "options": {}
+      },
+      "id": "477b0c01-016f-4c9f-9a99-841a1bdb947b",
+      "name": "Append to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Woolworths prices",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Coles prices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Woolworths prices": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coles prices": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Flatten rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flatten rows": {
+      "main": [
+        [
+          {
+            "node": "Append to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "active": false
+}
